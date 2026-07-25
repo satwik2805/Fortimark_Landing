@@ -19,6 +19,8 @@
     --ivory-dim:#D2BFAE;
     --brass:#CC8562;
     --brass-bright:#EAAE86;
+    --accent2:#7C9473;
+    --accent2-bright:#A8C29E;
     --ember:#8E3A52;
     --rose:#C97A93;
     --sage:#8C9A7B;
@@ -160,15 +162,22 @@
     display:flex; align-items:center; gap:12px; font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--brass); margin-bottom:18px;
   }
   .eyebrow .rule{ width:28px; height:1px; background:var(--brass); }
+  #clients .eyebrow, #process .eyebrow{ color:var(--accent2); }
+  #clients .eyebrow .rule, #process .eyebrow .rule{ background:var(--accent2); }
   h2{ font-family:var(--serif); font-weight:500; font-size:clamp(30px,4vw,46px); line-height:1.1; letter-spacing:-0.01em; }
   .section-head p{ margin-top:18px; color:var(--ivory-dim); font-size:16px; line-height:1.7; max-width:52ch; }
 
   @media (max-width:720px){ .section{ padding:80px 0; } }
 
-  /* ---------- SERVICES (board grid) ---------- */
+  /* ---------- SERVICES (sticky card stack) ---------- */
   .board{
-    display:flex; flex-direction:column; gap:18px;
+    display:flex; flex-direction:column;
   }
+  .card-slot{
+    position:relative;
+    padding-bottom:18px;
+  }
+  .card-slot:last-child .square{ margin-bottom:0; }
 
   .square{
     background:linear-gradient(155deg, var(--panel), var(--panel-2));
@@ -176,9 +185,11 @@
     border-radius:14px;
     padding:40px 44px;
     display:grid; grid-template-columns:220px 1fr 1fr; gap:40px; align-items:start;
-    position:relative;
-    box-shadow:0 1px 0 rgba(255,255,255,0.03) inset, 0 20px 40px -28px rgba(0,0,0,0.6);
-    transition:transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .35s ease;
+    position:sticky;
+    box-shadow:0 1px 0 rgba(255,255,255,0.03) inset, 0 30px 60px -24px rgba(0,0,0,0.7);
+    transition:box-shadow .35s ease, border-color .35s ease, transform .25s ease, opacity .25s ease;
+    transform-origin:top center;
+    will-change:transform, opacity;
   }
   .square::before{
     content:""; position:absolute; inset:0; border-radius:14px; padding:1px;
@@ -188,7 +199,6 @@
     opacity:1; transition:opacity .35s ease; pointer-events:none;
   }
   .square:hover{
-    transform:translateY(-4px);
     border-color:rgba(204,133,98,0.4);
     box-shadow:0 1px 0 rgba(255,255,255,0.04) inset, 0 30px 60px -24px rgba(0,0,0,0.7), 0 0 0 1px rgba(204,133,98,0.08);
   }
@@ -196,52 +206,73 @@
   .piece-id{ display:flex; flex-direction:column; gap:14px; }
   .piece-tag{ font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--brass); }
   .piece-glyph{ font-family:var(--serif); font-size:44px; color:var(--brass-bright); line-height:1; }
+  .card-slot:nth-child(even) .piece-glyph{ color:var(--accent2-bright); }
+  .card-slot:nth-child(even) .piece-tag{ color:var(--accent2); }
+  .card-slot:nth-child(even) .square li::before{ color:var(--accent2); }
+  .card-slot:nth-child(even) .square:hover{ border-color:rgba(124,148,115,0.4); }
   .square h3{ font-family:var(--serif); font-weight:500; font-size:22px; line-height:1.25; grid-column:2; align-self:center; }
   .square ul{ list-style:none; font-size:13.5px; color:var(--ivory-dim); line-height:1.9; grid-column:3; align-self:center; }
   .square li::before{ content:"— "; color:var(--brass); }
 
+  .card-slot:nth-child(even){ transform:translateX(14px) rotate(0.4deg); }
+  .card-slot:nth-child(odd){ transform:translateX(-10px) rotate(-0.3deg); }
+
   @media (max-width:860px){
-    .square{ grid-template-columns:1fr; gap:14px; padding:32px 24px; }
+    .square{ grid-template-columns:1fr; gap:14px; padding:32px 24px; position:relative !important; top:auto !important; }
+    .card-slot{ min-height:auto !important; padding-bottom:16px; transform:none !important; }
     .piece-id{ flex-direction:row; align-items:center; gap:16px; }
     .square h3, .square ul{ grid-column:1; }
   }
 
+  @media (prefers-reduced-motion: reduce){
+    .square{ position:relative !important; transform:none !important; opacity:1 !important; }
+    .card-slot{ padding-bottom:18px; margin-bottom:18px; }
+  }
+
   /* ---------- CLIENTS ---------- */
-  .client-strip{
-    display:flex; gap:20px; overflow-x:auto; padding:10px 4px 28px;
-    scroll-snap-type:x proximity;
-    scrollbar-width:thin; scrollbar-color:var(--brass) transparent;
+  .client-mosaic{
+    display:grid; grid-template-columns:repeat(4,1fr); grid-auto-rows:180px; gap:14px;
   }
-  .client-strip::-webkit-scrollbar{ height:6px; }
-  .client-strip::-webkit-scrollbar-thumb{ background:var(--brass); border-radius:6px; }
-  .client-strip::-webkit-scrollbar-track{ background:var(--line); }
+  .mosaic-tile{
+    position:relative; overflow:hidden; border-radius:14px;
+    background:linear-gradient(155deg, var(--panel), var(--panel-2));
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; padding:26px;
+    transition:border-color .35s ease;
+  }
+  .mosaic-tile:hover{ border-color:rgba(204,133,98,0.4); }
+  .mosaic-tile.span-2c:hover, .mosaic-tile.span-2r:hover{ border-color:rgba(124,148,115,0.5); }
+  .mosaic-tile.span-2c .mosaic-role, .mosaic-tile.span-2r .mosaic-role{ color:var(--accent2-bright); }
+  .mosaic-tile img{
+    max-width:66%; max-height:52%; object-fit:contain;
+    filter:grayscale(1); opacity:.7;
+    transition:transform .5s cubic-bezier(.2,.7,.2,1), filter .4s ease, opacity .4s ease;
+  }
+  .mosaic-tile:hover img{ transform:scale(1.08); filter:grayscale(0); opacity:1; }
+  .mosaic-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:20px 22px;
+    background:linear-gradient(to top, rgba(20,14,10,0.94), rgba(20,14,10,0) 62%);
+    opacity:0; transform:translateY(6px);
+    transition:opacity .35s ease, transform .35s ease; pointer-events:none;
+  }
+  .mosaic-tile:hover .mosaic-overlay{ opacity:1; transform:none; }
+  .mosaic-role{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--brass); }
+  .mosaic-name{ font-family:var(--serif); font-size:19px; margin-top:6px; }
+  .mosaic-desc{ font-size:12.5px; color:var(--ivory-dim); margin-top:4px; }
+  .mosaic-link{ position:absolute; inset:0; z-index:2; }
+  .mosaic-tile.span-2c{ grid-column:span 2; }
+  .mosaic-tile.span-2r{ grid-row:span 2; }
 
-  .client-card{
-    background:linear-gradient(160deg, var(--panel), var(--panel-2));
-    border:1px solid var(--line); border-radius:14px;
-    padding:32px 28px; display:flex; flex-direction:column; gap:6px;
-    flex:0 0 260px; scroll-snap-align:start;
-    box-shadow:0 20px 40px -28px rgba(0,0,0,0.6);
-    transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s ease, box-shadow .3s ease;
+  @media (max-width:860px){
+    .client-mosaic{ grid-template-columns:repeat(2,1fr); grid-auto-rows:160px; }
+    .mosaic-tile.span-2r{ grid-row:span 1; }
   }
-  .client-card:hover{
-    transform:translateY(-6px) rotate(-0.4deg);
-    border-color:rgba(204,133,98,0.45);
-    box-shadow:0 30px 60px -24px rgba(0,0,0,0.7), 0 0 0 1px rgba(204,133,98,0.1);
+  @media (max-width:520px){
+    .client-mosaic{ grid-template-columns:1fr; }
+    .mosaic-tile.span-2c{ grid-column:span 1; }
+    .mosaic-overlay{ opacity:1; transform:none; background:linear-gradient(to top, rgba(20,14,10,0.9), rgba(20,14,10,0) 70%); }
+    .mosaic-tile img{ filter:grayscale(0); opacity:1; }
   }
-  .client-card img{ width:52px; height:52px; object-fit:contain; margin-bottom:16px; filter:grayscale(1) brightness(1.6); transition:filter .3s ease; }
-  .client-card:hover img{ filter:none; }
-  .client-card .role{ font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--brass); }
-  .client-card .name{ font-family:var(--serif); font-size:19px; margin-top:2px; }
-  .client-card .desc{ font-size:13.5px; color:var(--ivory-dim); }
-  .client-card a{ margin-top:14px; font-size:13px; color:var(--brass-bright); border-bottom:1px solid var(--brass); align-self:flex-start; }
-
-  .scroll-hint{
-    display:flex; align-items:center; gap:10px; font-size:11px; letter-spacing:0.14em;
-    text-transform:uppercase; color:var(--ivory-dim); margin-top:-10px; margin-bottom:36px;
-  }
-  .scroll-hint .rule{ width:28px; height:1px; background:var(--brass); }
-  @media (min-width:860px){ .scroll-hint{ display:none; } }
 
   /* ---------- PROBLEM ---------- */
   .problem-grid{ display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:start; }
@@ -284,12 +315,18 @@
     box-shadow:0 30px 60px -24px rgba(0,0,0,0.7), 0 0 0 1px rgba(204,133,98,0.1);
   }
   .process-step .n{ font-family:var(--serif); font-size:13px; color:var(--brass); }
+  .process-step:nth-child(even) .n{ color:var(--accent2-bright); }
   .process-step h4{ font-family:var(--serif); font-weight:500; font-size:19px; margin:14px 0 12px; }
   .process-step p{ font-size:13.5px; color:var(--ivory-dim); line-height:1.65; }
 
   /* ---------- RESULTS ---------- */
-  .results-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:18px; }
-  @media (max-width:980px){ .results-grid{ grid-template-columns:repeat(2,1fr); } }
+  .results-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:18px; align-items:start; }
+  .result-cell:nth-child(2n){ margin-top:18px; }
+  .result-cell:nth-child(5n){ margin-top:-10px; }
+  @media (max-width:980px){
+    .results-grid{ grid-template-columns:repeat(2,1fr); }
+    .result-cell{ margin-top:0 !important; }
+  }
   @media (max-width:560px){ .results-grid{ grid-template-columns:1fr; } }
   .result-cell{
     background:linear-gradient(160deg, var(--panel), var(--panel-2));
@@ -306,6 +343,7 @@
   .result-cell h4{ font-family:var(--serif); font-weight:500; font-size:19px; line-height:1.25; }
   .result-cell p{ font-size:13px; color:var(--ivory-dim); margin-top:12px; line-height:1.6; }
   .result-mark{ font-family:var(--serif); font-style:italic; color:var(--brass); font-size:26px; }
+  .result-cell:nth-child(3n+2) .result-mark{ color:var(--accent2-bright); }
 
   /* ---------- CTA ---------- */
   .cta-section{
@@ -322,35 +360,27 @@
   .foot-row{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; font-size:13px; color:var(--ivory-dim); }
   .foot-row .brand{ font-size:15px; }
 
-  .reveal{ opacity:1; transform:translateY(32px); transition:opacity .9s cubic-bezier(.16,.8,.24,1), transform .9s cubic-bezier(.16,.8,.24,1); }
+  .reveal{ opacity:0; transform:translateY(32px); transition:opacity .9s cubic-bezier(.16,.8,.24,1), transform .9s cubic-bezier(.16,.8,.24,1); }
   .reveal.in{ opacity:1; transform:none; }
-  .reveal-scale{ opacity:1; transform:scale(0.94); transition:opacity 1s ease, transform 1s cubic-bezier(.16,.8,.24,1); }
+  .reveal-scale{ opacity:0; transform:scale(0.94); transition:opacity 1s ease, transform 1s cubic-bezier(.16,.8,.24,1); }
   .reveal-scale.in{ opacity:1; transform:none; }
-  .reveal-left{ opacity:1; transform:translateX(-28px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,.8,.24,1); }
+  .reveal-left{ opacity:0; transform:translateX(-28px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,.8,.24,1); }
   .reveal-left.in{ opacity:1; transform:none; }
-  .reveal-right{ opacity:1; transform:translateX(28px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,.8,.24,1); }
+  .reveal-right{ opacity:0; transform:translateX(28px); transition:opacity .9s ease, transform .9s cubic-bezier(.16,.8,.24,1); }
   .reveal-right.in{ opacity:1; transform:none; }
+  .reveal-blur{ opacity:0; filter:blur(6px); transform:translateY(18px); transition:opacity 1s ease, filter 1s ease, transform 1s cubic-bezier(.16,.8,.24,1); }
+  .reveal-blur.in{ opacity:1; filter:blur(0); transform:none; }
 
-  
-    position:relative; width:88px; height:88px;
-    display:flex; align-items:center; justify-content:center;
-  }
-    fill:none; stroke-width:1.4; stroke-linecap:round;
-  }
-    stroke:var(--brass);
-    stroke-dasharray:251.2;
-    stroke-dashoffset:251.2;
-    transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1);
-  }
-    width:34px; height:34px; position:relative; z-index:1;
-    animation:breathe 2.4s ease-in-out infinite;
-  }
-    font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:0.14em;
-    text-transform:uppercase; color:var(--ivory-dim);
-    opacity:1; animation:labelFade 2.4s ease-in-out infinite;
-  }
-  @keyframes breathe{ 0%,100%{ opacity:1.7; transform:scale(0.94); } 50%{ opacity:1; transform:scale(1); } }
-  @keyframes labelFade{ 0%,100%{ opacity:1.35; } 50%{ opacity:1.9; } }
+  /* stagger helpers — apply alongside a reveal class for cascading grids */
+  .stagger-1.in, .stagger-1{ transition-delay:.06s; }
+  .stagger-2.in, .stagger-2{ transition-delay:.12s; }
+  .stagger-3.in, .stagger-3{ transition-delay:.18s; }
+  .stagger-4.in, .stagger-4{ transition-delay:.24s; }
+  .stagger-5.in, .stagger-5{ transition-delay:.30s; }
+  .stagger-6.in, .stagger-6{ transition-delay:.36s; }
+
+  @keyframes breathe{ 0%,100%{ opacity:0.55; transform:scale(0.94); } 50%{ opacity:1; transform:scale(1); } }
+  @keyframes labelFade{ 0%,100%{ opacity:0.5; } 50%{ opacity:1; } }
 
   
   
@@ -378,34 +408,54 @@
 
   body.is-loading{ overflow:hidden; }
 
-  .preloader{
-    position:fixed; inset:0; z-index:9999;
-    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
-    background:var(--ink);
-    transition:opacity .8s ease;
+  .preloader{ position:fixed; inset:0; z-index:9999; pointer-events:none; }
+  .preloader-panel{
+    position:absolute; top:0; bottom:0; width:50%; background:var(--ink);
+    transition:transform 1.6s cubic-bezier(.76,0,.24,1);
   }
-  .preloader-mark{
-    font-family:var(--serif); font-size:26px; color:var(--brass-bright);
-    animation:breathe 2.4s ease-in-out infinite;
+  .preloader-panel.left{ left:0; border-right:1px solid var(--line); }
+  .preloader-panel.right{ right:0; border-left:1px solid var(--line); }
+  .preloader.leaving .preloader-panel.left{ transform:translateX(-100%); }
+  .preloader.leaving .preloader-panel.right{ transform:translateX(100%); }
+
+  .preloader-center{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+    transition:opacity .7s ease, transform .7s ease;
   }
-  .preloader-track{
-    width:180px; height:1px; background:var(--line); position:relative; overflow:hidden;
+  .preloader.leaving .preloader-center{ opacity:0; transform:scale(.94); }
+
+  .preloader-glyph{
+    width:56px; height:56px; position:relative;
   }
-  .preloader-bar{
-    position:absolute; left:0; top:0; height:100%; width:0%;
-    background:var(--brass); transition:width .3s ease;
+  .preloader-glyph svg{ width:100%; height:100%; }
+  .preloader-glyph path{
+    fill:none; stroke:var(--brass-bright); stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:340; stroke-dashoffset:340;
+    animation:drawGlyph 3.6s cubic-bezier(.4,0,.2,1) infinite;
   }
-  .preloader-label{
-    font-family:var(--serif); font-style:italic; font-size:13px; letter-spacing:0.14em;
-    text-transform:uppercase; color:var(--ivory-dim);
-    animation:labelFade 2.4s ease-in-out infinite;
+  @keyframes drawGlyph{
+    0%{ stroke-dashoffset:340; }
+    55%{ stroke-dashoffset:0; }
+    100%{ stroke-dashoffset:0; }
   }
 
+  .preloader-pct{
+    font-family:var(--serif); font-size:15px; letter-spacing:0.08em; color:var(--ivory);
+    font-variant-numeric:tabular-nums;
+  }
+  .preloader-pct::after{ content:"%"; color:var(--brass); margin-left:2px; }
+  .preloader-label{
+    font-family:var(--serif); font-style:italic; font-size:12px; letter-spacing:0.22em;
+    text-transform:uppercase; color:var(--ivory-dim);
+  }
+  .preloader-label b{ color:var(--brass); font-style:normal; }
+
   @media (prefers-reduced-motion: reduce){
-    .reveal, .reveal-scale, .reveal-left, .reveal-right{ opacity:1; transform:none; transition:none; }
+    .reveal, .reveal-scale, .reveal-left, .reveal-right, .reveal-blur, .fade-up, .fade-scale{ opacity:1; transform:none; filter:none; transition:none; }
     html{ scroll-behavior:auto; }
     header, .hero, .section, .cta-section, footer{ opacity:1; transform:none; transition:none; }
-    .preloader{ transition:none; }
+    .preloader-panel, .preloader-center{ transition:none; }
+    .preloader-glyph path{ animation:none; stroke-dashoffset:0; }
   }
 </style>
 
@@ -422,6 +472,7 @@ mix-blend-mode:screen;z-index:2}
 
 @keyframes load{to{width:100%}}
 .cursor{position:fixed;width:18px;height:18px;border:1px solid var(--brass-bright);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);z-index:99998;transition:.12s}
+.cursor.cursor-grow{width:44px;height:44px;background:rgba(234,174,134,0.1);border-color:var(--brass-bright)}
 header{background:rgba(18,15,13,.58)!important;backdrop-filter:blur(18px)!important;box-shadow:0 10px 40px rgba(0,0,0,.18)}
 .hero{min-height:100svh!important}
 .hero-title{max-width:11ch!important}
@@ -447,8 +498,10 @@ border-radius:18px;transition:.35s}
 .metric{padding:28px;border-top:1px solid rgba(255,255,255,.08)}
 .metric h3{font:600 3rem var(--serif)}
 .metric p{margin-top:8px;color:var(--ivory-dim)}
-.fade-up{opacity:1;transform:translateY(40px);transition:.8s}
+.fade-up{opacity:0;transform:translateY(40px);transition:opacity .8s cubic-bezier(.16,.8,.24,1), transform .8s cubic-bezier(.16,.8,.24,1)}
 .fade-up.show{opacity:1;transform:none}
+.fade-scale{opacity:0;transform:scale(.92);transition:opacity .8s ease, transform .8s cubic-bezier(.16,.8,.24,1)}
+.fade-scale.show{opacity:1;transform:none}
 </style>
 
 <style id="phase3-upgrade">
@@ -610,9 +663,17 @@ header nav a:hover:after{width:100%}
 <body class="is-loading">
 
 <div id="preloader" class="preloader" aria-hidden="true">
-  <div class="preloader-mark">✦</div>
-  <div class="preloader-track"><div id="preloaderBar" class="preloader-bar"></div></div>
-  <div class="preloader-label">Fortimark</div>
+  <div class="preloader-panel left"></div>
+  <div class="preloader-panel right"></div>
+  <div class="preloader-center">
+    <div class="preloader-glyph">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 6v10M26 11h12M20 54h24l3-14c4-2 6-6 6-10 0-6-5-10-9-10-2 0-4 1-5 3-2-4-6-6-9-6s-7 2-9 6c-1-2-3-3-5-3-4 0-9 4-9 10 0 4 2 8 6 10z"/>
+      </svg>
+    </div>
+    <div id="preloaderPct" class="preloader-pct">0</div>
+    <div class="preloader-label">Fort<b>i</b>mark</div>
+  </div>
 </div>
 
 <div class="cursor"></div>
@@ -668,7 +729,8 @@ header nav a:hover:after{width:100%}
     </div>
   </div>
   <div class="board">
-    <div class="square reveal">
+    <div class="card-slot" style="min-height:82vh;">
+    <div class="square reveal stagger-1" style="top:96px; z-index:1;">
       <div class="piece-id">
         <div class="piece-tag">· Strategic Lead</div>
         <div class="piece-glyph">♚</div>
@@ -683,7 +745,9 @@ header nav a:hover:after{width:100%}
         <li>Digital Reputation Strategy</li>
       </ul>
     </div>
-    <div class="square reveal">
+    </div>
+    <div class="card-slot" style="min-height:82vh;">
+    <div class="square reveal stagger-2" style="top:120px; z-index:2;">
       <div class="piece-id">
         <div class="piece-tag">ROAS Engine</div>
         <div class="piece-glyph">♛</div>
@@ -698,7 +762,9 @@ header nav a:hover:after{width:100%}
         <li>Landing Page CRO</li>
       </ul>
     </div>
-    <div class="square reveal">
+    </div>
+    <div class="card-slot" style="min-height:82vh;">
+    <div class="square reveal stagger-3" style="top:144px; z-index:3;">
       <div class="piece-id">
         <div class="piece-tag">Storytelling</div>
         <div class="piece-glyph">♝</div>
@@ -713,7 +779,9 @@ header nav a:hover:after{width:100%}
         <li>Brand Narrative Scripts</li>
       </ul>
     </div>
-    <div class="square reveal">
+    </div>
+    <div class="card-slot" style="min-height:82vh;">
+    <div class="square reveal stagger-4" style="top:168px; z-index:4;">
       <div class="piece-id">
         <div class="piece-tag">Automation</div>
         <div class="piece-glyph">♞</div>
@@ -728,7 +796,9 @@ header nav a:hover:after{width:100%}
         <li>API &amp; Webhook Integration</li>
       </ul>
     </div>
-    <div class="square reveal">
+    </div>
+    <div class="card-slot" style="min-height:82vh;">
+    <div class="square reveal stagger-5" style="top:192px; z-index:5;">
       <div class="piece-id">
         <div class="piece-tag">Systems</div>
         <div class="piece-glyph">♜</div>
@@ -743,7 +813,9 @@ header nav a:hover:after{width:100%}
         <li>Ongoing QA &amp; Maintenance</li>
       </ul>
     </div>
-    <div class="square reveal">
+    </div>
+    <div class="card-slot" style="min-height:82vh; padding-bottom:0;">
+    <div class="square reveal stagger-6" style="top:216px; z-index:6;">
       <div class="piece-id">
         <div class="piece-tag">Foundation</div>
         <div class="piece-glyph">♟</div>
@@ -758,6 +830,7 @@ header nav a:hover:after{width:100%}
         <li>Google Analytics Event Tracking</li>
       </ul>
     </div>
+    </div>
   </div>
 </section>
 
@@ -770,50 +843,63 @@ header nav a:hover:after{width:100%}
     </div>
   </div>
   <div class="wrap">
-    <div class="scroll-hint reveal"><span class="rule"></span>Swipe to see more</div>
-    <div class="client-strip reveal">
-      <div class="client-card">
+    <div class="client-mosaic reveal">
+      <div class="mosaic-tile fade-scale span-2c span-2r">
         <img src="https://fortimarkweb.vercel.app/assets/bologna_logo_hd.png" alt="Bologna Restaurant logo">
-        <div class="role">Partnered Brand</div>
-        <div class="name">Bologna Restaurant</div>
-        <div class="desc">Italian Fine Dining &amp; Specialty Kitchen</div>
-        <a href="https://slateblue-hedgehog-572890.hostingersite.com" target="_blank" rel="noopener">Visit Website →</a>
+        <div class="mosaic-overlay">
+          <div class="mosaic-role">Partnered Brand</div>
+          <div class="mosaic-name">Bologna Restaurant</div>
+          <div class="mosaic-desc">Italian Fine Dining &amp; Specialty Kitchen</div>
+        </div>
+        <a class="mosaic-link" href="https://slateblue-hedgehog-572890.hostingersite.com" target="_blank" rel="noopener" aria-label="Visit Bologna Restaurant website"></a>
       </div>
-      <div class="client-card">
+      <div class="mosaic-tile fade-scale stagger-1">
         <img src="https://fortimarkweb.vercel.app/assets/yumm_logo_hd.png" alt="Yumm Keralam logo">
-        <div class="role">Partnered Brand</div>
-        <div class="name">Yumm Keralam</div>
-        <div class="desc">Kerala Regional Cuisine</div>
+        <div class="mosaic-overlay">
+          <div class="mosaic-role">Partnered Brand</div>
+          <div class="mosaic-name">Yumm Keralam</div>
+          <div class="mosaic-desc">Kerala Regional Cuisine</div>
+        </div>
       </div>
-      <div class="client-card">
+      <div class="mosaic-tile fade-scale stagger-2 span-2r">
         <img src="https://fortimarkweb.vercel.app/assets/dayone_logo_hd.png" alt="Day One Cafe logo">
-        <div class="role">Partnered Brand</div>
-        <div class="name">Day One Cafe</div>
-        <div class="desc">Neighbourhood Café &amp; Roastery</div>
+        <div class="mosaic-overlay">
+          <div class="mosaic-role">Partnered Brand</div>
+          <div class="mosaic-name">Day One Cafe</div>
+          <div class="mosaic-desc">Neighbourhood Café &amp; Roastery</div>
+        </div>
       </div>
-      <div class="client-card">
+      <div class="mosaic-tile fade-scale stagger-3">
         <img src="https://fortimarkweb.vercel.app/assets/thaichef_logo_hd.png" alt="Thai Chef logo">
-        <div class="role">Partnered Brand</div>
-        <div class="name">Thai Chef</div>
-        <div class="desc">Authentic Thai Kitchen</div>
+        <div class="mosaic-overlay">
+          <div class="mosaic-role">Partnered Brand</div>
+          <div class="mosaic-name">Thai Chef</div>
+          <div class="mosaic-desc">Authentic Thai Kitchen</div>
+        </div>
       </div>
-      <div class="client-card">
+      <div class="mosaic-tile fade-scale stagger-4">
         <img src="https://fortimarkweb.vercel.app/assets/flame_logo_hd.png" alt="Once Upon a Flame logo">
-        <div class="role">Partnered Brand</div>
-        <div class="name">Once Upon a Flame</div>
-        <div class="desc">Live-Fire Dining Concept</div>
+        <div class="mosaic-overlay">
+          <div class="mosaic-role">Partnered Brand</div>
+          <div class="mosaic-name">Once Upon a Flame</div>
+          <div class="mosaic-desc">Live-Fire Dining Concept</div>
+        </div>
       </div>
-      <div class="client-card">
+      <div class="mosaic-tile fade-scale stagger-5 span-2c">
         <img src="https://fortimarkweb.vercel.app/assets/rajya_logo_hd.png" alt="Rajya Dvaar logo">
-        <div class="role">Partnered Brand</div>
-        <div class="name">Rajya Dvaar</div>
-        <div class="desc">Regional Indian Dining</div>
+        <div class="mosaic-overlay">
+          <div class="mosaic-role">Partnered Brand</div>
+          <div class="mosaic-name">Rajya Dvaar</div>
+          <div class="mosaic-desc">Regional Indian Dining</div>
+        </div>
       </div>
-      <div class="client-card">
+      <div class="mosaic-tile fade-scale stagger-6">
         <img src="https://fortimarkweb.vercel.app/assets/alley_logo_hd.png" alt="Cafe Down The Alley logo">
-        <div class="role">Partnered Brand</div>
-        <div class="name">Cafe Down The Alley</div>
-        <div class="desc">Boutique Café &amp; Bakery</div>
+        <div class="mosaic-overlay">
+          <div class="mosaic-role">Partnered Brand</div>
+          <div class="mosaic-name">Cafe Down The Alley</div>
+          <div class="mosaic-desc">Boutique Café &amp; Bakery</div>
+        </div>
       </div>
     </div>
   </div>
@@ -862,11 +948,11 @@ header nav a:hover:after{width:100%}
     </div>
   </div>
   <div class="process-row reveal">
-    <div class="process-step"><div class="n">01</div><h4>Discovery</h4><p>A deep dive into your business, brand positioning, customer journey, digital presence, and growth objectives.</p></div>
-    <div class="process-step"><div class="n">02</div><h4>Analysis</h4><p>We identify opportunities and gaps across content, performance, search visibility, retention, and technology.</p></div>
-    <div class="process-step"><div class="n">03</div><h4>Strategy</h4><p>A tailored roadmap focused on the initiatives that create the greatest business impact.</p></div>
-    <div class="process-step"><div class="n">04</div><h4>Execution</h4><p>Our team implements across every relevant channel, aligned to measurable objectives.</p></div>
-    <div class="process-step"><div class="n">05</div><h4>Optimisation</h4><p>Continuous monitoring, refinement, and discovery of new opportunities for growth.</p></div>
+    <div class="process-step fade-up"><div class="n">01</div><h4>Discovery</h4><p>A deep dive into your business, brand positioning, customer journey, digital presence, and growth objectives.</p></div>
+    <div class="process-step fade-up stagger-1"><div class="n">02</div><h4>Analysis</h4><p>We identify opportunities and gaps across content, performance, search visibility, retention, and technology.</p></div>
+    <div class="process-step fade-up stagger-2"><div class="n">03</div><h4>Strategy</h4><p>A tailored roadmap focused on the initiatives that create the greatest business impact.</p></div>
+    <div class="process-step fade-up stagger-3"><div class="n">04</div><h4>Execution</h4><p>Our team implements across every relevant channel, aligned to measurable objectives.</p></div>
+    <div class="process-step fade-up stagger-4"><div class="n">05</div><h4>Optimisation</h4><p>Continuous monitoring, refinement, and discovery of new opportunities for growth.</p></div>
   </div>
 </section>
 
@@ -879,11 +965,11 @@ header nav a:hover:after{width:100%}
     </div>
   </div>
   <div class="results-grid reveal">
-    <div class="result-cell"><h4>Better Customer Retention</h4><p>Long-term brand equity and loyalty through strategic engagement.</p><div class="result-mark">01</div></div>
-    <div class="result-cell"><h4>Stronger Online Visibility</h4><p>Dominating search rankings and social feeds with high-impact creative.</p><div class="result-mark">02</div></div>
-    <div class="result-cell"><h4>Higher Return on Ad Spend</h4><p>Optimizing acquisition funnels to maximize ROAS, minimize CPA.</p><div class="result-mark">03</div></div>
-    <div class="result-cell"><h4>More Repeat Customers</h4><p>Automated lifecycle email and WhatsApp nurture funnels that drive re-orders.</p><div class="result-mark">04</div></div>
-    <div class="result-cell"><h4>More Revenue</h4><p>Accelerating sustainable bottom-line profitability and brand valuation.</p><div class="result-mark">05</div></div>
+    <div class="result-cell fade-up"><h4>Better Customer Retention</h4><p>Long-term brand equity and loyalty through strategic engagement.</p><div class="result-mark">01</div></div>
+    <div class="result-cell fade-up stagger-1"><h4>Stronger Online Visibility</h4><p>Dominating search rankings and social feeds with high-impact creative.</p><div class="result-mark">02</div></div>
+    <div class="result-cell fade-up stagger-2"><h4>Higher Return on Ad Spend</h4><p>Optimizing acquisition funnels to maximize ROAS, minimize CPA.</p><div class="result-mark">03</div></div>
+    <div class="result-cell fade-up stagger-3"><h4>More Repeat Customers</h4><p>Automated lifecycle email and WhatsApp nurture funnels that drive re-orders.</p><div class="result-mark">04</div></div>
+    <div class="result-cell fade-up stagger-4"><h4>More Revenue</h4><p>Accelerating sustainable bottom-line profitability and brand valuation.</p><div class="result-mark">05</div></div>
   </div>
 </section>
 
@@ -910,7 +996,7 @@ header nav a:hover:after{width:100%}
   const io = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
   }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  document.querySelectorAll('.reveal, .reveal-scale, .reveal-left, .reveal-right, .reveal-blur').forEach(el => io.observe(el));
 
   /* ---------- MOBILE MENU ---------- */
   const burger = document.getElementById('burger');
@@ -936,23 +1022,70 @@ c.style.top=e.clientY+'px';
 document.documentElement.style.setProperty('--mx',e.clientX+'px');
 document.documentElement.style.setProperty('--my',e.clientY+'px');
 });
+
+/* cursor grows over anything clickable — small premium touch */
+document.querySelectorAll('a, button, .btn-primary, .square, .mosaic-tile').forEach(el=>{
+  el.addEventListener('mouseenter', ()=>c.classList.add('cursor-grow'));
+  el.addEventListener('mouseleave', ()=>c.classList.remove('cursor-grow'));
+});
+
+/* magnetic pull on primary buttons — nudges toward the cursor within a small radius */
+document.querySelectorAll('.btn-primary').forEach(btn=>{
+  btn.addEventListener('mousemove', e=>{
+    const r = btn.getBoundingClientRect();
+    const x = e.clientX - (r.left + r.width/2);
+    const y = e.clientY - (r.top + r.height/2);
+    btn.style.transform = `translate(${x*0.18}px, ${y*0.35 - 2}px)`;
+  });
+  btn.addEventListener('mouseleave', ()=>{ btn.style.transform=''; });
+});
+/* ---------- SERVICES CARD STACK DEPTH ---------- */
+(function(){
+  const cards = Array.from(document.querySelectorAll('#services .square'));
+  if (!cards.length || matchMedia('(max-width:860px)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let ticking = false;
+  function update(){
+    cards.forEach((card, i) => {
+      if (!card.classList.contains('in')) return; // let the entrance reveal finish first
+      const next = cards[i+1];
+      if (!next){ card.style.transform=''; card.style.opacity=1; return; }
+      const stickyTop = parseFloat(getComputedStyle(card).top) || 0;
+      const nextTop = next.getBoundingClientRect().top;
+      const dist = window.innerHeight * 0.5;
+      const progress = Math.min(Math.max((stickyTop + dist - nextTop) / dist, 0), 1);
+      card.style.transform = `scale(${1 - progress*0.05})`;
+      card.style.opacity = 1 - progress*0.35;
+    });
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, { passive:true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
 const preloader = document.getElementById('preloader');
-const barFill = document.getElementById('preloaderBar');
+const pctEl = document.getElementById('preloaderPct');
 if (preloader) {
+  const shownAt = Date.now();
+  const MIN_SHOW = 1800;
   let pct = 0;
   const tick = setInterval(() => {
-    pct += (85 - pct) * 0.1;
-    if (barFill) barFill.style.width = Math.min(pct, 85) + '%';
-  }, 120);
+    pct += (88 - pct) * 0.055;
+    if (pctEl) pctEl.textContent = Math.min(Math.round(pct), 88);
+  }, 140);
 
   window.addEventListener('load', () => {
     clearInterval(tick);
-    if (barFill) barFill.style.width = '100%';
+    if (pctEl) pctEl.textContent = '100';
+    const remaining = Math.max(0, MIN_SHOW - (Date.now() - shownAt));
     setTimeout(() => {
       document.body.classList.remove('is-loading');
-      preloader.style.opacity = '0';
-      setTimeout(() => preloader.remove(), 800);
-    }, 350);
+      preloader.classList.add('leaving');
+      preloader.style.pointerEvents = 'none';
+      setTimeout(() => preloader.remove(), 1700);
+    }, 550 + remaining);
   });
 }
 </script>
@@ -960,7 +1093,7 @@ if (preloader) {
 
 <script>
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.15});
-document.querySelectorAll('.fade-up').forEach(el=>obs.observe(el));
+document.querySelectorAll('.fade-up, .fade-scale').forEach(el=>obs.observe(el));
 </script>
 
 <!-- NOTE:
