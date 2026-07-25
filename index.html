@@ -135,10 +135,16 @@
 
   .hero-watermark{
     position:absolute; right:-6%; top:50%; transform:translateY(-50%);
-    width:min(52vw, 640px); opacity:1.05; pointer-events:none; z-index:0;
+    width:min(52vw, 640px); opacity:0.16; pointer-events:none; z-index:0;
     filter:brightness(0) invert(1);
   }
-  @media (max-width:720px){ .hero-watermark{ width:80vw; right:-20%; opacity:1.04; } }
+  @media (max-width:720px){
+    .hero-watermark{
+      width:60vw; max-width:320px;
+      right:-18%; top:auto; bottom:-4%; transform:none;
+      opacity:0.08;
+    }
+  }
 
   .scroll-cue{
     position:absolute; bottom:36px; left:32px; display:flex; align-items:center; gap:10px;
