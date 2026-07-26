@@ -297,27 +297,53 @@
   }
   .problem-statement span{ color:var(--brass-bright); font-style:italic; }
 
-  /* ---------- PROCESS ---------- */
-  .process-row{
-    display:grid; grid-template-columns:repeat(5,1fr); gap:18px;
+  /* ---------- PROCESS (pinned horizontal scroll) ---------- */
+  .process-pin{ position:relative; height:420vh; }
+  .process-pin-inner{
+    position:sticky; top:0; height:100vh; overflow:hidden;
+    display:flex; align-items:center;
   }
-  @media (max-width:980px){ .process-row{ grid-template-columns:1fr; } }
-  .process-step{
+  .process-track{
+    display:flex; gap:36px; padding:0 8vw; will-change:transform;
+  }
+  .process-panel{
+    flex:0 0 min(70vw, 520px);
     background:linear-gradient(160deg, var(--panel), var(--panel-2));
-    border:1px solid var(--line); border-radius:14px;
-    padding:36px 26px;
-    box-shadow:0 20px 40px -28px rgba(0,0,0,0.6);
-    transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s ease, box-shadow .3s ease;
+    border:1px solid var(--line); border-radius:18px;
+    padding:56px 48px;
+    box-shadow:0 30px 60px -28px rgba(0,0,0,0.65);
   }
-  .process-step:hover{
-    transform:translateY(-5px);
-    border-color:rgba(204,133,98,0.4);
-    box-shadow:0 30px 60px -24px rgba(0,0,0,0.7), 0 0 0 1px rgba(204,133,98,0.1);
+  .process-panel .n{ font-family:var(--serif); font-size:68px; line-height:1; color:var(--brass); }
+  .process-panel:nth-child(even) .n{ color:var(--accent2-bright); }
+  .process-panel h4{ font-family:var(--serif); font-weight:500; font-size:26px; margin:22px 0 14px; }
+  .process-panel p{ font-size:15px; color:var(--ivory-dim); line-height:1.75; max-width:38ch; }
+
+  .process-progress{
+    position:absolute; left:50%; bottom:56px; transform:translateX(-50%);
+    display:flex; gap:9px; z-index:2;
   }
-  .process-step .n{ font-family:var(--serif); font-size:13px; color:var(--brass); }
-  .process-step:nth-child(even) .n{ color:var(--accent2-bright); }
-  .process-step h4{ font-family:var(--serif); font-weight:500; font-size:19px; margin:14px 0 12px; }
-  .process-step p{ font-size:13.5px; color:var(--ivory-dim); line-height:1.65; }
+  .process-progress .dot{ width:7px; height:7px; border-radius:50%; background:var(--line); transition:background .3s ease, transform .3s ease; }
+  .process-progress .dot.active{ background:var(--brass); transform:scale(1.4); }
+
+  @media (max-width:860px){
+    .process-pin{ height:auto; }
+    .process-pin-inner{ position:relative; top:auto; height:auto; overflow:visible; display:block; }
+    .process-track{
+      display:flex; overflow-x:auto; gap:16px; padding:4px 20px 24px;
+      scroll-snap-type:x proximity; scrollbar-width:thin; scrollbar-color:var(--brass) transparent;
+    }
+    .process-panel{ flex:0 0 78vw; padding:34px 28px; scroll-snap-align:start; }
+    .process-panel .n{ font-size:44px; }
+    .process-panel h4{ font-size:20px; }
+    .process-progress{ display:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .process-pin{ height:auto; }
+    .process-pin-inner{ position:relative; top:auto; height:auto; overflow-x:auto; display:flex; }
+    .process-track{ transform:none !important; }
+    .process-progress{ display:none; }
+  }
 
   /* ---------- RESULTS ---------- */
   .results-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:18px; align-items:start; }
@@ -944,17 +970,25 @@ header nav a:hover:after{width:100%}
     <div class="section-head reveal">
       <div class="eyebrow"><span class="rule"></span>THE PROCESS</div>
       <h2>Diagnose before we prescribe.</h2>
-      <p>Every hospitality brand wants growth, but growth challenges rarely share one solution. That's why we never begin with execution — we begin with understanding.</p>
+      <p>Every hospitality brand wants growth, but growth challenges rarely share one solution. That's why we never begin with execution — we begin with understanding. Scroll on.</p>
     </div>
   </div>
-  <div class="process-row reveal">
-    <div class="process-step fade-up"><div class="n">01</div><h4>Discovery</h4><p>A deep dive into your business, brand positioning, customer journey, digital presence, and growth objectives.</p></div>
-    <div class="process-step fade-up stagger-1"><div class="n">02</div><h4>Analysis</h4><p>We identify opportunities and gaps across content, performance, search visibility, retention, and technology.</p></div>
-    <div class="process-step fade-up stagger-2"><div class="n">03</div><h4>Strategy</h4><p>A tailored roadmap focused on the initiatives that create the greatest business impact.</p></div>
-    <div class="process-step fade-up stagger-3"><div class="n">04</div><h4>Execution</h4><p>Our team implements across every relevant channel, aligned to measurable objectives.</p></div>
-    <div class="process-step fade-up stagger-4"><div class="n">05</div><h4>Optimisation</h4><p>Continuous monitoring, refinement, and discovery of new opportunities for growth.</p></div>
-  </div>
 </section>
+
+<div class="process-pin" id="processPin">
+  <div class="process-pin-inner">
+    <div class="process-track" id="processTrack">
+      <div class="process-panel"><div class="n">01</div><h4>Discovery</h4><p>A deep dive into your business, brand positioning, customer journey, digital presence, and growth objectives.</p></div>
+      <div class="process-panel"><div class="n">02</div><h4>Analysis</h4><p>We identify opportunities and gaps across content, performance, search visibility, retention, and technology.</p></div>
+      <div class="process-panel"><div class="n">03</div><h4>Strategy</h4><p>A tailored roadmap focused on the initiatives that create the greatest business impact.</p></div>
+      <div class="process-panel"><div class="n">04</div><h4>Execution</h4><p>Our team implements across every relevant channel, aligned to measurable objectives.</p></div>
+      <div class="process-panel"><div class="n">05</div><h4>Optimisation</h4><p>Continuous monitoring, refinement, and discovery of new opportunities for growth.</p></div>
+    </div>
+    <div class="process-progress" id="processProgress">
+      <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+</div>
 
 <section class="section" id="results">
   <div class="wrap">
@@ -1056,6 +1090,32 @@ document.querySelectorAll('.btn-primary').forEach(btn=>{
       card.style.transform = `scale(${1 - progress*0.05})`;
       card.style.opacity = 1 - progress*0.35;
     });
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, { passive:true });
+  window.addEventListener('resize', update);
+  update();
+})();
+
+/* ---------- PROCESS PINNED HORIZONTAL SCROLL ---------- */
+(function(){
+  const pin = document.getElementById('processPin');
+  const track = document.getElementById('processTrack');
+  const dots = document.querySelectorAll('#processProgress .dot');
+  if (!pin || !track) return;
+  if (matchMedia('(max-width:860px)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let ticking = false;
+  function update(){
+    const rect = pin.getBoundingClientRect();
+    const scrollable = pin.offsetHeight - window.innerHeight;
+    const progress = Math.min(Math.max(-rect.top / scrollable, 0), 1);
+    const maxTranslate = Math.max(0, track.scrollWidth - window.innerWidth);
+    track.style.transform = `translateX(${-progress * maxTranslate}px)`;
+    const active = Math.min(dots.length - 1, Math.floor(progress * dots.length));
+    dots.forEach((d, i) => d.classList.toggle('active', i === active));
     ticking = false;
   }
   window.addEventListener('scroll', () => {
