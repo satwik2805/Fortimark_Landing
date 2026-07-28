@@ -6304,6 +6304,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateCoverflow(centerIdx) {
     activeIndex = (centerIdx + total) % total;
+    const mobile = window.innerWidth <= 768;
 
     cards.forEach((card, idx) => {
       let offset = idx - activeIndex;
@@ -6320,33 +6321,37 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.zIndex = '20';
         card.style.pointerEvents = 'auto';
       } else if (offset === -1) {
-        card.style.transform = 'translate3d(-260px, 0px, 20px) rotateY(25deg) scale(0.88)';
+        card.style.transform = mobile
+          ? 'translate3d(-150px, 0px, 10px) rotateY(20deg) scale(0.85)'
+          : 'translate3d(-260px, 0px, 20px) rotateY(25deg) scale(0.88)';
         card.style.opacity = '0.7';
         card.style.filter = 'blur(1.5px)';
         card.style.zIndex = '10';
         card.style.pointerEvents = 'auto';
       } else if (offset === 1) {
-        card.style.transform = 'translate3d(260px, 0px, 20px) rotateY(-25deg) scale(0.88)';
+        card.style.transform = mobile
+          ? 'translate3d(150px, 0px, 10px) rotateY(-20deg) scale(0.85)'
+          : 'translate3d(260px, 0px, 20px) rotateY(-25deg) scale(0.88)';
         card.style.opacity = '0.7';
         card.style.filter = 'blur(1.5px)';
         card.style.zIndex = '10';
         card.style.pointerEvents = 'auto';
-      } else if (offset === -2) {
+      } else if (offset === -2 && !mobile) {
         card.style.transform = 'translate3d(-460px, 0px, -120px) rotateY(40deg) scale(0.76)';
         card.style.opacity = '0.35';
         card.style.filter = 'blur(3.5px)';
         card.style.zIndex = '5';
         card.style.pointerEvents = 'none';
-      } else if (offset === 2) {
+      } else if (offset === 2 && !mobile) {
         card.style.transform = 'translate3d(460px, 0px, -120px) rotateY(-40deg) scale(0.76)';
         card.style.opacity = '0.35';
         card.style.filter = 'blur(3.5px)';
         card.style.zIndex = '5';
         card.style.pointerEvents = 'none';
       } else {
-        card.style.transform = 'translate3d(0px, 0px, -300px) scale(0.5)';
+        card.style.transform = 'translate3d(0px, 0px, -200px) scale(0.5)';
         card.style.opacity = '0';
-        card.style.filter = 'blur(5px)';
+        card.style.filter = 'blur(4px)';
         card.style.zIndex = '1';
         card.style.pointerEvents = 'none';
       }
@@ -6632,6 +6637,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function updateDiagonal(centerIdx) {
     activeIndex = (centerIdx + total) % total;
+    const mobile = window.innerWidth <= 768;
 
     cards.forEach((card, idx) => {
       let offset = idx - activeIndex;
@@ -6648,13 +6654,17 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.zIndex = '20';
         card.style.pointerEvents = 'auto';
       } else if (offset === -1) {
-        card.style.transform = 'translate3d(-210px, -120px, -60px) rotateY(18deg) scale(0.88)';
+        card.style.transform = mobile
+          ? 'translate3d(-125px, -70px, -40px) rotateY(15deg) scale(0.85)'
+          : 'translate3d(-210px, -120px, -60px) rotateY(18deg) scale(0.88)';
         card.style.opacity = '0.65';
         card.style.filter = 'blur(3px)';
         card.style.zIndex = '10';
         card.style.pointerEvents = 'auto';
       } else if (offset === 1) {
-        card.style.transform = 'translate3d(210px, 120px, -60px) rotateY(-18deg) scale(0.88)';
+        card.style.transform = mobile
+          ? 'translate3d(125px, 70px, -40px) rotateY(-15deg) scale(0.85)'
+          : 'translate3d(210px, 120px, -60px) rotateY(-18deg) scale(0.88)';
         card.style.opacity = '0.65';
         card.style.filter = 'blur(3px)';
         card.style.zIndex = '10';
